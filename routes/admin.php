@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\AttributeController;
+use App\Http\Controllers\Admin\AttributeOptionController;
 use App\Http\Controllers\Admin\RoleController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\CategoryController;
@@ -23,9 +25,11 @@ Route::group(['prefix' => 'v1'], function () {
         Route::apiResource('roles', RoleController::class);
         #admins
         Route::apiResource('admins', AdminController::class);
-        #sliders
+        #attributes
+        Route::apiResource('attributes', AttributeController::class);
+        #attributeOption
+        Route::apiResource('attribute-options', AttributeOptionController::class);
         #settings
         #products
-        #attributes
     });
 });
