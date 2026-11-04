@@ -35,6 +35,7 @@ class Product extends Model
       'image',
       'price',
       'price_after_discount',
+      'discount_ends_at',
       'available_quantity',
       'status',
       'sku',
@@ -57,7 +58,30 @@ class Product extends Model
     }
     public function scopeActive($query)
     {
-        return $query->where('status', StatusEnum::ACTIVE);
+        return $query->where('status', StatusEnum::ACTIVE->value);
+    }
+    public function scopeOnOffer($query)
+    {
+        return $query
+            ->whereNotNull('price_after_discount')
+            ->whereColumn('price_after_discount', '<', 'price')
+            ->where(function ($q) {
+                $q->whereNull('discount_ends_at')
+                ->orWhere('discount_ends_at', '>', now());
+            });
+    }
+    public function getHasActiveOfferAttribute(): bool
+    {
+        return $this->price_after_discount !== null
+            && $this->price_after_discount < $this->price
+            && ($this->discount_ends_at === null || $this->discount_ends_at->isFuture());
+    }
+    public function getDiscountPercentageAttribute(): ?int
+    {
+        if (! $this->has_active_offer || $this->price <= 0) {
+            return null;
+        }
+        return (int) round((($this->price - $this->price_after_discount) / $this->price) * 100);
     }
     public function getImageUrlAttribute()
     {

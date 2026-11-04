@@ -33,6 +33,7 @@ class UpdateRequest extends FormRequest
             'description.ar' => ['sometimes', 'string'],
             'price' => ['sometimes', 'numeric', 'min:0'],
             'price_after_discount' => ['nullable', 'numeric', 'lte:price'],
+            'discount_ends_at'     => ['nullable', 'date', 'after:now', 'required_with:price_after_discount'],
             'available_quantity' => ['sometimes', 'integer', 'min:0'],
             'status' => ['sometimes', Rule::in(['active', 'inactive'])],
             'category_id' => ['sometimes', 'exists:categories,id'],

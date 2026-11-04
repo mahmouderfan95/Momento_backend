@@ -33,6 +33,7 @@ class StoreRequest extends FormRequest
             'description.ar' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
             'price_after_discount' => ['nullable', 'numeric', 'lte:price'],
+            'discount_ends_at'     => ['nullable', 'date', 'after:now', 'required_with:price_after_discount'],
             'available_quantity' => ['required', 'integer', 'min:0'],
             'status' => ['required', Rule::in(['active', 'inactive'])],
             'category_id' => ['required', 'exists:categories,id'],

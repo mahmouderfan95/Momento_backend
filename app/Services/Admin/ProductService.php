@@ -71,7 +71,7 @@ class ProductService
 
             Log::error('error for store product: ' . $e->getMessage());
 
-            throw $e; // مهم: سيب الخطأ يطلع للـ Global Handler
+            throw $e;
         }
     }
 
