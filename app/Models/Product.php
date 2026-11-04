@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatusEnum;
+use App\Support\FavoriteOwner;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -55,6 +56,20 @@ class Product extends Model
             AttributeOption::class,
             'product_attribute_options'
         )->withTimestamps();
+    }
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(UserProductWhitelist::class, 'product_id');
+    }
+    public function scopeWithIsFavorite($query, FavoriteOwner $owner)
+    {
+        if (! $owner->isIdentified()) {
+            return $query;
+        }
+
+        return $query->withExists(['favorites as is_favorite' => function ($q) use ($owner) {
+            $q->forOwner($owner->userId, $owner->guestToken);
+        }]);
     }
     public function scopeActive($query)
     {
