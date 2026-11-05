@@ -2,8 +2,10 @@
 namespace App\Services\Front;
 use App\Http\Resources\Front\HomePage\HomeCategoryResource;
 use App\Http\Resources\Front\HomePage\HomeProductResource;
+use App\Http\Resources\Front\HomePage\HomeSliderResource;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Slider;
 use Illuminate\Support\Collection;
 
 class HomePageService
@@ -16,6 +18,7 @@ class HomePageService
             'categories'      => HomeCategoryResource::collection($this->categories()),
             'latest_products' => HomeProductResource::collection($this->latestProducts()),
             'offers'          => HomeProductResource::collection($this->offers()),
+            'sliders'         => HomeSliderResource::collection($this->sliders()),
 //            'best_sellers'    => $this->bestSellers(),
         ];
     }
@@ -44,6 +47,14 @@ class HomePageService
             ->with(['attributeOptions.attribute'])
             ->orderBy('discount_ends_at')
             ->limit(self::LIMIT)
+            ->get();
+    }
+    public function sliders(): Collection
+    {
+        return Slider::query()
+            ->Active()
+            ->limit(self::LIMIT)
+            ->orderBy('id')
             ->get();
     }
 }

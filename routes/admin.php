@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\AttributeOptionController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\SliderController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\AuthController;
@@ -32,6 +33,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::apiResource('attribute-options', AttributeOptionController::class);
         #products
         Route::apiResource('products',ProductController::class);
-        #settings
+        #sliders
+        Route::apiResource('sliders', SliderController::class);
     });
 });
