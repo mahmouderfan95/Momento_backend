@@ -51,6 +51,11 @@ abstract class BaseRepository implements BaseRepositoryInterface
     {
         return (bool) $model->delete();
     }
+    public function codeExists(string $code): bool
+    {
+        return $this->model->newQuery()->where('code', $code)->exists();
+    }
+
     protected function applyFilters($query, array $filters): void
     {
         if (!empty($filters['status'])) {

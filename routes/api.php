@@ -16,4 +16,5 @@ Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
         Route::post('{productId}/toggle', [FavoriteController::class, 'toggle'])
             ->whereNumber('productId');
     });
+    #cart
 });

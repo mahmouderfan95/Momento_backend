@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\AttributeOptionController;
+use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SliderController;
@@ -35,5 +36,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::apiResource('products',ProductController::class);
         #sliders
         Route::apiResource('sliders', SliderController::class);
+        #copons
+        Route::apiResource('coupons', CouponController::class);
     });
 });
