@@ -102,4 +102,8 @@ class Product extends Model
     {
         return $this->image == null ? null : asset('storage/products/' . $this->image) ;
     }
+    public function getCurrentPriceAttribute(): float
+    {
+        return (float) ($this->has_active_offer ? $this->price_after_discount : $this->price);
+    }
 }
