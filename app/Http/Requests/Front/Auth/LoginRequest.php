@@ -23,9 +23,15 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
+            'email'       => ['required', 'email'],
+            'password'    => ['required', 'string'],
             'device_name' => ['sometimes', 'string', 'max:255'],
         ];
+    }
+    public function guestToken(): ?string
+    {
+        $token = $this->header('X-Guest-Token');
+
+        return is_string($token) && strlen($token) >= 16 ? $token : null;
     }
 }

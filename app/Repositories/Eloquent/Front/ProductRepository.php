@@ -12,6 +12,8 @@ class ProductRepository implements ProductRepositoryInterface
         return Product::query()
             ->Active()
             ->with($relations)
+            ->withAvg('ratings', 'rating')
+            ->withCount('ratings')
             ->findOrFail($id);
     }
 

@@ -1,11 +1,20 @@
 <?php
+
+use App\Http\Controllers\Front\RatingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Front\HomePageController;
 use App\Http\Controllers\Front\ProductController;
 use App\Http\Controllers\Front\FavoriteController;
 use App\Http\Controllers\Front\CartController;
+use App\Http\Controllers\Front\AuthController;
 
 Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
+    Route::group(['prefix' => 'auth'], function () {
+        #register api
+        Route::post('register',[AuthController::class,'register']);
+        #login api
+        Route::post('login',[AuthController::class,'login']);
+    });
     #get homepage api
     Route::get('home', [HomePageController::class, 'index']);
     #get product details api
@@ -24,5 +33,9 @@ Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
         Route::put('items/{itemId}', [CartController::class, 'update'])->whereNumber('itemId');
         Route::delete('items/{itemId}', [CartController::class, 'destroy'])->whereNumber('itemId');
         Route::delete('/', [CartController::class, 'clear']);
+    });
+
+    Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::post('products/{productId}/ratings',[RatingController::class,'store']);
     });
 });

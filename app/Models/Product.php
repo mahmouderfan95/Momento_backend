@@ -61,6 +61,10 @@ class Product extends Model
     {
         return $this->hasMany(UserProductWhitelist::class, 'product_id');
     }
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(Rating::class, 'product_id');
+    }
     public function scopeWithIsFavorite($query, FavoriteOwner $owner)
     {
         if (! $owner->isIdentified()) {

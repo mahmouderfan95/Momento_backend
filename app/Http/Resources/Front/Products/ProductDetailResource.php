@@ -33,6 +33,10 @@ class ProductDetailResource extends JsonResource
             'price_after_discount' => $this->price_after_discount,
             'available_quantity' => $this->available_quantity,
             'category' => CategoryResource::make($this->whenLoaded('category')),
+            'rating' => [
+                'average' => round((float) ($this->ratings_avg_rating ?? 0), 1),
+                'count'   => (int) ($this->ratings_count ?? 0),
+            ],
             'attributes' => $this->whenLoaded('attributeOptions', fn () =>
             ProductAttributeResource::collection(
                 $this->attributeOptions
