@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SliderController;
+use App\Http\Controllers\Admin\WalletNumberController;
+use App\Http\Controllers\Admin\WalletProviderController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\AuthController;
@@ -38,5 +40,9 @@ Route::group(['prefix' => 'v1'], function () {
         Route::apiResource('sliders', SliderController::class);
         #copons
         Route::apiResource('coupons', CouponController::class);
+        #wallet providers
+        Route::apiResource('wallet-providers', WalletProviderController::class);
+        #wallet numbers
+        Route::apiResource('wallet-numbers', WalletNumberController::class);
     });
 });

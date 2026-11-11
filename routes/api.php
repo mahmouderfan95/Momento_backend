@@ -35,10 +35,11 @@ Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
         Route::delete('items/{itemId}', [CartController::class, 'destroy'])->whereNumber('itemId');
         Route::delete('/', [CartController::class, 'clear']);
     });
-    #store order
+    #checkout order
     Route::post('orders', [OrderController::class, 'checkout']);
-
+    #auth routes
     Route::group(['middleware' => 'auth:sanctum'], function () {
+        #product rating
         Route::post('products/{productId}/ratings',[RatingController::class,'store']);
         #orders
         Route::group(['prefix' => 'orders'], function () {

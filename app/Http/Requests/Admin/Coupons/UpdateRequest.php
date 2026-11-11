@@ -23,7 +23,7 @@ class UpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        $id = $this->route('id');
+        $id = $this->route('coupon');
         return [
             'code' => ['sometimes', 'string', 'max:64', Rule::unique('coupons', 'code')->ignore($id)],
             'value' => ['sometimes', 'numeric', 'min:0.01'],
