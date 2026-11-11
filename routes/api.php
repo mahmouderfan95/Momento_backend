@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Front\OrderController;
 use App\Http\Controllers\Front\RatingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Front\HomePageController;
@@ -34,8 +35,19 @@ Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
         Route::delete('items/{itemId}', [CartController::class, 'destroy'])->whereNumber('itemId');
         Route::delete('/', [CartController::class, 'clear']);
     });
+    #store order
+    Route::post('orders', [OrderController::class, 'checkout']);
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('products/{productId}/ratings',[RatingController::class,'store']);
+        #orders
+        Route::group(['prefix' => 'orders'], function () {
+            #get all orders
+           Route::get('/', [OrderController::class, 'index']);
+           #show order details
+           Route::get('{orderNumber}', [OrderController::class, 'show']);
+           #cancel order
+           Route::post('{orderNumber}/cancel', [OrderController::class, 'cancel']);
+        });
     });
 });
