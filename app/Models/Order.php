@@ -26,6 +26,8 @@ class Order extends Model
       'address',
       'customer_name',
       'customer_phone',
+      'wallet_number',
+      'wallet_provider_id'
     ];
     protected $casts = [
       'status' => OrderStatusEnum::class,

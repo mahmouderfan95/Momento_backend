@@ -5,6 +5,7 @@ use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\User;
+use App\Services\Admin\ImageService;
 use App\Support\FavoriteOwner;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +17,8 @@ class CheckoutService
     public function __construct(
         protected CouponService $couponService,
         protected GuestDataMerger$merger,
+        protected StockService $stockService,
+        protected ImageService $imageService,
     ){}
     public function checkout(FavoriteOwner $owner, ?User $authUser ,array $data) : Order
     {
@@ -66,11 +69,16 @@ class CheckoutService
         }
         $coupon   = null;
         $discount = 0;
+        $imagePath = null;
 
         if (! empty($data['coupon_code'])) {
             [$coupon, $discount] = $this->couponService->validateAndCalculate(
                 $data['coupon_code'], $user, $subtotal
             );
+        }
+        if(isset($data['conversion_image'])){
+            $imagePath = $this->imageService->store($data['conversion_image'], 'orders');
+            $data['conversion_image'] = $imagePath;
         }
 
         $total = max(round($subtotal - $discount, 2), 0);
@@ -89,6 +97,9 @@ class CheckoutService
             'customer_email' => $user->email,
             'address'        => $data['address'],
             'notes'          => $data['notes'] ?? null,
+            'conversion_image' => $imagePath,
+            'wallet_number' => $data['wallet_number'],
+            'wallet_provider_id' => $data['wallet_provider_id'],
         ]);
         $order->orderItems()->createMany($orderItems);
 
@@ -98,9 +109,10 @@ class CheckoutService
 
         $cart->items()->delete();
         $cart->delete();
-
+        $order->load('orderItems');
+        $this->stockService->reverse($order);
         DB::commit();
-        return $order->load('orderItems');
+        return $order;
     }
     private function generateOrderNumber(): string
     {

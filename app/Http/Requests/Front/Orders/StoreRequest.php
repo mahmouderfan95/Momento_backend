@@ -37,6 +37,8 @@ class StoreRequest extends FormRequest
             'payment_type' => ['required', 'string', 'in:cod,visa,wallet'],
             'address' => ['required', 'string', 'max:255'],
             'conversion_image' => ['required_if:payment_type,wallet', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'wallet_provider_id' => ['required_if:payment_type,wallet', 'exists:wallet_providers,id'],
+            'wallet_number' => ['required_if:payment_type,wallet', 'string', 'max:20'],
             'coupon_code' => ['nullable', 'string', 'exists:coupons,code'],
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string','regex:/^01[0-2,5][0-9]{8}$/',],

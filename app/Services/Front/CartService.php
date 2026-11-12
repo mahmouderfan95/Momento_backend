@@ -35,6 +35,7 @@ class CartService
             if ($item) {
                 $qty = $item->quantity + $data['quantity'];
                 $this->assertQuantity($qty);
+                $this->assertStock($product, $qty);
 
                 $this->repository->updateItem($item, [
                     'quantity' => $qty,
@@ -43,6 +44,7 @@ class CartService
                 ]);
             } else {
                 $this->assertQuantity($data['quantity']);
+                $this->assertStock($product, $data['quantity']);
 
                 $this->repository->createItem($cart, [
                     'product_id'   => $product->id,
@@ -64,7 +66,7 @@ class CartService
         return DB::transaction(function () use ($owner, $itemId, $quantity) {
             $cart = $this->repository->findForOwner($owner) ?? abort(404);
             $item = $this->repository->findItem($cart, $itemId) ?? abort(404);
-
+            $this->assertStock($item->product, $quantity);
             $price = $item->product->current_price;
 
             $this->repository->updateItem($item, [
@@ -124,6 +126,20 @@ class CartService
         if ($quantity > self::MAX_ITEM_QUANTITY) {
             throw ValidationException::withMessages([
                 'quantity' => ['الحد الأقصى للكمية ' . self::MAX_ITEM_QUANTITY],
+            ]);
+        }
+    }
+    private function assertStock(Product $product, int $requestedQuantity): void
+    {
+        if ($product->available_quantity <= 0) {
+            throw ValidationException::withMessages([
+                'quantity' => ['هذا المنتج غير متوفر حاليًا'],
+            ]);
+        }
+
+        if ($requestedQuantity > $product->available_quantity) {
+            throw ValidationException::withMessages([
+                'quantity' => ["الكمية المتاحة من هذا المنتج {$product->available_quantity} فقط"],
             ]);
         }
     }
