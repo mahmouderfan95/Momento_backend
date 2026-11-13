@@ -8,8 +8,19 @@ use App\Http\Controllers\Front\ProductController;
 use App\Http\Controllers\Front\FavoriteController;
 use App\Http\Controllers\Front\CartController;
 use App\Http\Controllers\Front\AuthController;
+use App\Http\Controllers\Front\WalletProviderController;
+use App\Http\Controllers\Front\CouponController;
 
 Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
+    #get wallet provider
+    Route::get('wallet-providers',[WalletProviderController::class,'index']);
+    #get wallet numbers by provider
+    Route::get('wallet-numbers/{provider}',[WalletProviderController::class, 'getWalletNumbers']);
+    #get coupon value by code
+    Route::get('get-valid-coupon/{code}',[CouponController::class, 'getValidCoupon']);
+    #check value by coupon code
+    Route::get('get-coupon-value/{code}/{cartTotal}',[CouponController::class, 'getCouponValue']);
+
     Route::group(['prefix' => 'auth'], function () {
         #register api
         Route::post('register',[AuthController::class,'register']);
