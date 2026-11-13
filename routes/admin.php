@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\WalletProviderController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\OrderController;
 
 
 
@@ -44,5 +45,9 @@ Route::group(['prefix' => 'v1'], function () {
         Route::apiResource('wallet-providers', WalletProviderController::class);
         #wallet numbers
         Route::apiResource('wallet-numbers', WalletNumberController::class);
+        #orders
+        Route::apiResource('orders',OrderController::class);
+        #update order status
+        Route::put('orders/{orderId}/update-status', [OrderController::class, 'updateStatus']);
     });
 });
