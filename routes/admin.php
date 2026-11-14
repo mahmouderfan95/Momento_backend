@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\OrderController;
-
-
-
+use App\Http\Controllers\Admin\SettingController;
 Route::group(['prefix' => 'v1'], function () {
     Route::post('login', [AuthController::class, 'login'])
         ->middleware('throttle:5,1');
@@ -49,5 +47,8 @@ Route::group(['prefix' => 'v1'], function () {
         Route::apiResource('orders',OrderController::class);
         #update order status
         Route::put('orders/{orderId}/update-status', [OrderController::class, 'updateStatus']);
+        #settings api
+        Route::get('settings', [SettingController::class,'show']);
+        Route::post('settings',[SettingController::class,'update']);
     });
 });
