@@ -19,6 +19,17 @@ enum OrderStatusEnum : string
             self::Cancelled, self::Refunded => [],
         };
     }
+    public function label(): string
+    {
+        return match ($this) {
+            self::Pending   => 'قيد الانتظار',
+            self::Completed => 'مؤكد',
+            self::Shipped   => 'تم الشحن',
+            self::Delivered => 'تم التسليم',
+            self::Cancelled => 'ملغي',
+            self::Refunded  => 'مسترد',
+        };
+    }
     public function canTransitionTo(self $to): bool
     {
         return in_array($to, $this->allowedTransitions(), true);

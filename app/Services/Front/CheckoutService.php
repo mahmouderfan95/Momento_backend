@@ -98,8 +98,8 @@ class CheckoutService
             'address'        => $data['address'],
             'notes'          => $data['notes'] ?? null,
             'conversion_image' => $imagePath,
-            'wallet_number' => $data['wallet_number'],
-            'wallet_provider_id' => $data['wallet_provider_id'],
+            'wallet_number' => $data['wallet_number'] ?? null,
+            'wallet_provider_id' => $data['wallet_provider_id'] ?? null,
         ]);
         $order->orderItems()->createMany($orderItems);
 

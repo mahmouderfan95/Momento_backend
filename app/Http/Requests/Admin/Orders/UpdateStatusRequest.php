@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Admin\Orders;
 
+use App\Enums\OrderStatusEnum;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateStatusRequest extends FormRequest
 {
@@ -23,8 +25,9 @@ class UpdateStatusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'status' => 'required|string|in:pending,completed,shipped,delivered,cancelled,refunded',
-            'notes' => 'nullable|string'
+            'status'        => ['required', Rule::enum(OrderStatusEnum::class)],
+            'cancel_reason' => ['nullable', 'string', 'max:500',
+                Rule::requiredIf(fn () => $this->status === OrderStatusEnum::Cancelled->value)],
         ];
     }
 }

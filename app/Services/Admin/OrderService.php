@@ -1,8 +1,10 @@
 <?php
 namespace App\Services\Admin;
 use App\Enums\OrderStatusEnum;
+use App\Models\Coupon;
 use App\Models\Order;
 use App\Repositories\Eloquent\OrderRepository;
+use App\Services\Front\StockService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -10,7 +12,10 @@ use Illuminate\Validation\ValidationException;
 
 class OrderService
 {
-    public function __construct(protected OrderRepository $repository){}
+    public function __construct(
+        protected OrderRepository $repository,
+        protected StockService $stockService,
+    ){}
     public function list(array $filters, int $perPage = 15): LengthAwarePaginator
     {
         return $this->repository->paginate($perPage, $filters);
@@ -74,24 +79,49 @@ class OrderService
 
         return $deleteOrder;
     }
-    public function updateOrderStatus($id,$request) : Order
+    public function updateOrderStatus(int $id, OrderStatusEnum $newStatus): Order
     {
-        $order = $this->repository->find($id);
-        $fail = fn (string $msg) => throw ValidationException::withMessages(['order_status' => [$msg]]);
-        if (!$order) {
-            $fail('الطلب غير موجود');
-        }
-        if ($order->status === OrderStatusEnum::Cancelled->value && $request->status !== OrderStatusEnum::Refunded->value) {
-            $fail('لا يمكن تغيير الحالة من "ملغاة" ما لم يتم استرداد المبلغ.');
-        }
-        if (in_array($order->status, [OrderStatusEnum::Delivered->value, OrderStatusEnum::Refunded->value])) {
-            $fail('لا يمكن تعديل الطلبات المكتملة');
-        }
-        $order->status = $request->status;
-        $order->save();
-        $order->orderItems()->update([
-            'status' => $request->status
-        ]);
-        return $order;
+        return DB::transaction(function () use ($id, $newStatus) {
+
+            /** @var Order $order */
+            $order = Order::query()->lockForUpdate()->findOrFail($id);
+            $current = $order->status;
+
+            if ($current === $newStatus) {
+                throw ValidationException::withMessages([
+                    'status' => ['الطلب بالفعل في هذه الحالة'],
+                ]);
+            }
+
+            if (! $current->canTransitionTo($newStatus)) {
+                throw ValidationException::withMessages([
+                    'status' => ["لا يمكن تحويل الطلب من «{$current->label()}» إلى «{$newStatus->label()}»"],
+                ]);
+            }
+
+            $attributes = ['status' => $newStatus];
+
+            if ($newStatus === OrderStatusEnum::Cancelled) {
+                $attributes['cancelled_at']  = now();
+                $attributes['cancel_reason'] = request('cancel_reason');
+            }
+
+            $order->update($attributes);
+            $order->orderItems()->update(['status' => $newStatus->value]);
+
+            if (in_array($newStatus, [OrderStatusEnum::Cancelled, OrderStatusEnum::Refunded], true)
+                && $current !== OrderStatusEnum::Cancelled) {
+                $order->load('orderItems');
+                $this->stockService->release($order);
+
+                if ($order->coupon_id) {
+                    Coupon::query()->whereKey($order->coupon_id)
+                        ->where('used_count', '>', 0)
+                        ->decrement('used_count');
+                }
+            }
+
+            return $order->refresh();
+        });
     }
 }
