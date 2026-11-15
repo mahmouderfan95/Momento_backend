@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\ReportController;
 Route::group(['prefix' => 'v1'], function () {
     Route::post('login', [AuthController::class, 'login'])
         ->middleware('throttle:5,1');
@@ -51,5 +52,19 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('settings', [SettingController::class,'show']);
         #update setting
         Route::post('settings',[SettingController::class,'update']);
+        #reports
+        Route::group(['prefix' => 'reports'], function () {
+            Route::get('dashboard',          [ReportController::class, 'dashboard']);
+            Route::get('sales',              [ReportController::class, 'salesOverTime']);
+//            Route::get('orders-by-status',   [ReportController::class, 'ordersByStatus']);
+//            Route::get('cancellations',      [ReportController::class, 'cancellations']);
+            Route::get('top-products',       [ReportController::class, 'topProducts']);
+            Route::get('stock',              [ReportController::class, 'stock']);
+            Route::get('dead-stock',         [ReportController::class, 'deadStock']);
+//            Route::get('categories',         [ReportController::class, 'categories']);
+//            Route::get('top-customers',      [ReportController::class, 'topCustomers']);
+//            Route::get('customers',          [ReportController::class, 'customersBreakdown']);
+//            Route::get('coupons',            [ReportController::class, 'couponsUsage']);
+        });
     });
 });

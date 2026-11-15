@@ -48,6 +48,19 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class, 'order_id');
     }
+    public function scopeRevenue($query)
+    {
+        return $query->whereIn('status', [
+            OrderStatusEnum::Completed,
+            OrderStatusEnum::Shipped,
+            OrderStatusEnum::Delivered,
+        ]);
+    }
+
+    public function scopeBetween($query, $from, $to)
+    {
+        return $query->whereBetween('created_at', [$from, $to]);
+    }
     public function getConversionImageUrlAttribute()
     {
         return $this->conversion_image == null ? null : asset('storage/uploads/orders/' . $this->conversion_image) ;
