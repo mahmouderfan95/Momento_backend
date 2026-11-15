@@ -49,6 +49,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::put('orders/{orderId}/update-status', [OrderController::class, 'updateStatus']);
         #settings api
         Route::get('settings', [SettingController::class,'show']);
+        #update setting
         Route::post('settings',[SettingController::class,'update']);
     });
 });
