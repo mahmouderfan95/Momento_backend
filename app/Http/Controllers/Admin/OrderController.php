@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\OrderStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Orders\UpdateStatusRequest;
 use App\Http\Resources\Admin\Orders\OrderCollection;
@@ -53,7 +54,12 @@ class OrderController extends Controller
     }
     public function updateStatus(int $id, UpdateStatusRequest $request): JsonResponse
     {
-        $order = $this->service->updateOrderStatus($id, $request);
-        return $this->ApiSuccessResponse([],'order status updated successfully');
+        $this->service->updateOrderStatus(
+            $id,
+            OrderStatusEnum::from($request->validated('status')),
+            $request->validated('cancel_reason')
+        );
+
+        return $this->ApiSuccessResponse([], 'order status updated successfully');
     }
 }

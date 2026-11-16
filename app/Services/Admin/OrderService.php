@@ -80,12 +80,15 @@ class OrderService
 
         return $deleteOrder;
     }
-    public function updateOrderStatus(int $id, OrderStatusEnum $newStatus): Order
-    {
-        return DB::transaction(function () use ($id, $newStatus) {
+    public function updateOrderStatus(
+        int $id,
+        OrderStatusEnum $newStatus,
+        ?string $cancelReason = null
+    ): Order {
+        return DB::transaction(function () use ($id, $newStatus, $cancelReason) {
 
             /** @var Order $order */
-            $order = Order::query()->lockForUpdate()->findOrFail($id);
+            $order   = Order::query()->lockForUpdate()->findOrFail($id);
             $current = $order->status;
 
             if ($current === $newStatus) {
@@ -104,14 +107,16 @@ class OrderService
 
             if ($newStatus === OrderStatusEnum::Cancelled) {
                 $attributes['cancelled_at']  = now();
-                $attributes['cancel_reason'] = request('cancel_reason');
+                $attributes['cancel_reason'] = $cancelReason;
             }
 
             $order->update($attributes);
             $order->orderItems()->update(['status' => $newStatus->value]);
 
-            if (in_array($newStatus, [OrderStatusEnum::Cancelled, OrderStatusEnum::Refunded], true)
-                && $current !== OrderStatusEnum::Cancelled) {
+            $releasesStock = in_array($newStatus, [OrderStatusEnum::Cancelled, OrderStatusEnum::Refunded], true)
+                && $current !== OrderStatusEnum::Cancelled;
+
+            if ($releasesStock) {
                 $order->load('orderItems');
                 $this->stockService->release($order);
 
@@ -121,7 +126,9 @@ class OrderService
                         ->decrement('used_count');
                 }
             }
+
             $order->user?->notify(new OrderStatusChangedNotification($order, $newStatus));
+
             return $order->refresh();
         });
     }

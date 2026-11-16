@@ -11,6 +11,7 @@ use App\Http\Controllers\Front\AuthController;
 use App\Http\Controllers\Front\WalletProviderController;
 use App\Http\Controllers\Front\CouponController;
 use App\Http\Controllers\Front\SettingController;
+use App\Http\Controllers\Front\NotificationController;
 
 Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
     #get wallet provider
@@ -62,6 +63,13 @@ Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
            Route::get('{orderNumber}', [OrderController::class, 'show']);
            #cancel order
            Route::post('{orderNumber}/cancel', [OrderController::class, 'cancel']);
+        });
+        Route::prefix('notifications')->group(function () {
+            Route::get('/', [NotificationController::class, 'index']);
+//            Route::get('unread-count', [NotificationController::class, 'unreadCount']);
+//            Route::post('read-all', [NotificationController::class, 'markAllAsRead']);
+            Route::post('{id}/read', [NotificationController::class, 'markAsRead'])->whereUuid('id');
+//            Route::delete('{id}', [NotificationController::class, 'destroy'])->whereUuid('id');
         });
     });
 });
