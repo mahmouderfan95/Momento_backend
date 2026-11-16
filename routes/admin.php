@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\NotificationController;
 Route::group(['prefix' => 'v1'], function () {
     Route::post('login', [AuthController::class, 'login'])
         ->middleware('throttle:5,1');
@@ -65,6 +66,13 @@ Route::group(['prefix' => 'v1'], function () {
 //            Route::get('top-customers',      [ReportController::class, 'topCustomers']);
 //            Route::get('customers',          [ReportController::class, 'customersBreakdown']);
 //            Route::get('coupons',            [ReportController::class, 'couponsUsage']);
+        });
+        #notifications
+        Route::prefix('notifications')->group(function () {
+            Route::get('/', [NotificationController::class, 'index']);
+            Route::get('unread-count', [NotificationController::class, 'unreadCount']);
+            Route::post('{id}/read', [NotificationController::class, 'markAsRead']);
+            Route::post('read-all', [NotificationController::class, 'markAllAsRead']);
         });
     });
 });

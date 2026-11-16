@@ -3,6 +3,7 @@ namespace App\Services\Admin;
 use App\Enums\OrderStatusEnum;
 use App\Models\Coupon;
 use App\Models\Order;
+use App\Notifications\OrderStatusChangedNotification;
 use App\Repositories\Eloquent\OrderRepository;
 use App\Services\Front\StockService;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -120,7 +121,7 @@ class OrderService
                         ->decrement('used_count');
                 }
             }
-
+            $order->user?->notify(new OrderStatusChangedNotification($order, $newStatus));
             return $order->refresh();
         });
     }

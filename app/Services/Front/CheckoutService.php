@@ -1,14 +1,18 @@
 <?php
 namespace App\Services\Front;
 use App\Enums\OrderStatusEnum;
+use App\Enums\StatusEnum;
+use App\Models\Admin;
 use App\Models\Cart;
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\User;
+use App\Notifications\NewOrderNotification;
 use App\Services\Admin\ImageService;
 use App\Support\FavoriteOwner;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -112,6 +116,8 @@ class CheckoutService
         $order->load('orderItems');
         $this->stockService->reverse($order);
         DB::commit();
+        $admin = Admin::query()->where('status',StatusEnum::ACTIVE->value)->first();
+        Notification::send($admin, new NewOrderNotification($order));
         return $order;
     }
     private function generateOrderNumber(): string
