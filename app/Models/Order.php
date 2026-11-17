@@ -27,7 +27,11 @@ class Order extends Model
       'customer_name',
       'customer_phone',
       'wallet_number',
-      'wallet_provider_id'
+      'wallet_provider_id',
+      'city_id',
+      'region_id',
+      'shipping_company_id',
+      'shipping_cost'
     ];
     protected $casts = [
       'status' => OrderStatusEnum::class,
@@ -43,6 +47,18 @@ class Order extends Model
     public function createdBy() : BelongsTo
     {
         return $this->belongsTo(Admin::class, 'created_by');
+    }
+    public function city() : BelongsTo
+    {
+        return $this->belongsTo(City::class, 'city_id');
+    }
+    public function region() : BelongsTo
+    {
+        return $this->belongsTo(Region::class, 'region_id');
+    }
+    public function shippingCompany() : BelongsTo
+    {
+        return $this->belongsTo(ShippingCompany::class, 'shipping_company_id');
     }
     public function orderItems() : HasMany
     {

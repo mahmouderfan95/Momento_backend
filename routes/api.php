@@ -12,6 +12,7 @@ use App\Http\Controllers\Front\WalletProviderController;
 use App\Http\Controllers\Front\CouponController;
 use App\Http\Controllers\Front\SettingController;
 use App\Http\Controllers\Front\NotificationController;
+use App\Http\Controllers\Front\ShippingPriceController;
 
 Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
     #get wallet provider
@@ -22,6 +23,8 @@ Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
     Route::get('get-valid-coupon/{code}',[CouponController::class, 'getValidCoupon']);
     #check value by coupon code
     Route::get('get-coupon-value/{code}/{cartTotal}',[CouponController::class, 'getCouponValue']);
+    #get shipping cost by city_id,shipping company
+    Route::get('get-shipping-cost/{city_id}',[ShippingPriceController::class, 'getShippingCost']);
     #get settings
     Route::get('settings',[SettingController::class,'index']);
     Route::group(['prefix' => 'auth'], function () {
