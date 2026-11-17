@@ -12,7 +12,7 @@ class UpdateRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +23,14 @@ class UpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'title' => 'sometimes|array',
+            'title.en' => 'sometimes|string',
+            'title.ar' => 'sometimes|string',
+            'description' => 'nullable|array',
+            'description.en' => 'nullable|string',
+            'description.ar' => 'nullable|string',
+            'image' => 'sometimes|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'status' => 'sometimes|string|in:active,inactive',
         ];
     }
 }
