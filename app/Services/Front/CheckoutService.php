@@ -62,7 +62,7 @@ class CheckoutService
                 'total'            => $line,
                 'product_snapshot' => [
                     'name'    => $product->getTranslations('name'),
-                    'image'   => $product->image,
+                    'image'   => $product->imageUrl,
                     'options' => $item->attributeOptions->map(fn ($o) => [
                         'attribute' => $o->attribute->getTranslations('name'),
                         'name'      => $o->getTranslations('name'),
