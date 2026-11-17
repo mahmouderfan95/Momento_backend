@@ -13,7 +13,7 @@ use App\Http\Controllers\Front\CouponController;
 use App\Http\Controllers\Front\SettingController;
 use App\Http\Controllers\Front\NotificationController;
 use App\Http\Controllers\Front\ShippingPriceController;
-
+use \App\Http\Controllers\Front\CityController;
 Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
     #get wallet provider
     Route::get('wallet-providers',[WalletProviderController::class,'index']);
@@ -25,8 +25,13 @@ Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
     Route::get('get-coupon-value/{code}/{cartTotal}',[CouponController::class, 'getCouponValue']);
     #get shipping cost by city_id,shipping company
     Route::get('get-shipping-cost/{city_id}',[ShippingPriceController::class, 'getShippingCost']);
+    #get cities
+    Route::get('cities',[CityController::class, 'getCities']);
+    #get regions by city id
+    Route::get('regions/{city_id}',[CityController::class, 'getRegions']);
     #get settings
     Route::get('settings',[SettingController::class,'index']);
+    #
     Route::group(['prefix' => 'auth'], function () {
         #register api
         Route::post('register',[AuthController::class,'register']);
