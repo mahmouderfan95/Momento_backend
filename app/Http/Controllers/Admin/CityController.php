@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Cities\StoreRequest;
+use App\Http\Requests\Admin\Cities\UpdateRequest;
+use App\Http\Resources\Admin\Cities\CityCollection;
+use App\Http\Resources\Admin\Cities\CityResource;
+use App\Services\Admin\CityService;
+use App\Traits\ApiResponseAble;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class CityController extends Controller
+{
+    use ApiResponseAble;
+    public function __construct(protected CityService $service){}
+    public function index(Request $request): JsonResponse
+    {
+        $filters = $request->only(['status', 'search']);
+        $perPage = (int) $request->get('per_page', 15);
+
+        $coupons = $this->service->list($filters, $perPage);
+
+        return $this->ApiSuccessResponse(CityCollection::make($coupons));
+    }
+
+    public function store(StoreRequest $request): JsonResponse
+    {
+        $category = $this->service->store($request->validated());
+
+        return $this->ApiSuccessResponse(new CityResource($category));
+    }
+    public function show(int $id): JsonResponse
+    {
+        $category = $this->service->find($id);
+
+        return $this->ApiSuccessResponse(new CityResource($category));
+    }
+
+    public function update(UpdateRequest $request, int $id): JsonResponse
+    {
+        $category = $this->service->update($id, $request->validated());
+
+        return $this->ApiSuccessResponse(new CityResource($category));
+    }
+
+    public function destroy(int $id): JsonResponse
+    {
+        $this->service->delete($id);
+
+        return $this->ApiSuccessResponse([],__('messages.deleted_successfully'));
+    }
+}

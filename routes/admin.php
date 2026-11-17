@@ -16,6 +16,10 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\CityController;
+use App\Http\Controllers\Admin\RegionController;
+use App\Http\Controllers\Admin\ShippingCompanyController;
+
 Route::group(['prefix' => 'v1'], function () {
     Route::post('login', [AuthController::class, 'login'])
         ->middleware('throttle:5,1');
@@ -53,6 +57,12 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('settings', [SettingController::class,'show']);
         #update setting
         Route::post('settings',[SettingController::class,'update']);
+        #cities
+        Route::apiResource('cities', CityController::class);
+        #regions
+        Route::apiResource('regions', RegionController::class);
+        #shipping companies
+        Route::apiResource('shipping-companies', ShippingCompanyController::class);
         #reports
         Route::group(['prefix' => 'reports'], function () {
             Route::get('dashboard',          [ReportController::class, 'dashboard']);
