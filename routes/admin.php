@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AttributeOptionController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\ShippingPriceController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\WalletNumberController;
 use App\Http\Controllers\Admin\WalletProviderController;
@@ -63,6 +64,8 @@ Route::group(['prefix' => 'v1'], function () {
         Route::apiResource('regions', RegionController::class);
         #shipping companies
         Route::apiResource('shipping-companies', ShippingCompanyController::class);
+        #shipping prices
+        Route::apiResource('shipping-prices', ShippingPriceController::class);
         #reports
         Route::group(['prefix' => 'reports'], function () {
             Route::get('dashboard',          [ReportController::class, 'dashboard']);
