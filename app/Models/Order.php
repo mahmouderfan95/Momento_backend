@@ -51,6 +51,7 @@ class Order extends Model
     public function scopeRevenue($query)
     {
         return $query->whereIn('status', [
+            OrderStatusEnum::Pending,
             OrderStatusEnum::Completed,
             OrderStatusEnum::Shipped,
             OrderStatusEnum::Delivered,
