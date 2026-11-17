@@ -25,7 +25,7 @@ class AuthService
     public function login(array $credentials, ?string $guestToken): array
     {
         /** @var User|null $user */
-        $user = User::query()->where('email', $credentials['email'])->first();
+        $user = User::query()->where('phone', $credentials['phone'])->first();
 
         if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             throw new AuthenticationFailedException('بيانات الدخول غير صحيحة');
