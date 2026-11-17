@@ -24,7 +24,7 @@ class OrderService
 
     public function find(int $id): Order
     {
-        return $this->repository->findOrFail($id);
+        return $this->repository->findOrFail($id,['orderItems']);
     }
 
     public function store(array $data): Order

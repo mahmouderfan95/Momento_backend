@@ -31,9 +31,11 @@ abstract class BaseRepository implements BaseRepositoryInterface
         return $this->model->newQuery()->find($id);
     }
 
-    public function findOrFail(int $id): Model
+    public function findOrFail(int $id,$relations = []): Model
     {
-        return $this->model->newQuery()->findOrFail($id);
+        return $this->model->newQuery()
+            ->with($relations)
+            ->findOrFail($id);
     }
     public function create(array $data): Model
     {
