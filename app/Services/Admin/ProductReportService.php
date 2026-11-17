@@ -12,7 +12,7 @@ class ProductReportService
     {
         return OrderItem::query()
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
-            ->whereIn('orders.status', [OrderStatusEnum::Completed, OrderStatusEnum::Shipped, OrderStatusEnum::Delivered])
+            ->whereIn('orders.status', [OrderStatusEnum::Pending,OrderStatusEnum::Completed, OrderStatusEnum::Shipped, OrderStatusEnum::Delivered])
             ->whereBetween('orders.created_at', [$from, $to])
             ->whereNotNull('order_items.product_id')
             ->select('order_items.product_id')
