@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\AuthenticationFailedException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Front\Auth\LoginRequest;
+use App\Http\Requests\Admin\Auth\LoginRequest;
 use App\Http\Resources\Front\Auth\UserResource;
 use App\Services\Admin\AuthService;
 use App\Traits\ApiResponseAble;
