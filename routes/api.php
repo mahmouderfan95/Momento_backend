@@ -42,6 +42,8 @@ Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
     Route::get('home', [HomePageController::class, 'index']);
     #get product details api
     Route::get('products/{id}',[ProductController::class, 'details']);
+    #products by category id
+    Route::get('category/{id}/products',[ProductController::class, 'categoryProducts']);
     #fav apis
     Route::prefix('favorites')->group(function () {
         Route::get('/', [FavoriteController::class, 'index']);

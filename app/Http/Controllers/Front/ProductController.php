@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Front\Products\ProductCollection;
 use App\Http\Resources\Front\Products\ProductDetailResource;
 use App\Services\Front\ProductService;
 use App\Traits\ApiResponseAble;
@@ -21,5 +22,10 @@ class ProductController extends Controller
             'product' => new ProductDetailResource($data['product']),
             'related' => ProductDetailResource::collection($data['related']),
         ]);
+    }
+    public function categoryProducts(int $categoryId) : JsonResponse
+    {
+        $products = $this->service->getCategoryProducts($categoryId);
+        return $this->ApiSuccessResponse(ProductCollection::make($products));
     }
 }
