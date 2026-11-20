@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Front\Auth\ChangePasswordRequest;
 use App\Http\Requests\Front\Auth\LoginRequest;
 use App\Http\Requests\Front\Auth\RegisterRequest;
+use App\Http\Requests\Front\Auth\UpdateProfileRequest;
 use App\Http\Resources\Front\Auth\UserResource;
 use App\Services\Front\AuthService;
 use App\Traits\ApiResponseAble;
@@ -26,5 +28,25 @@ class AuthController extends Controller
         $result = $this->authService->login($request->validated(), $request->guestToken());
 
         return $this->ApiSuccessResponseAndToken(UserResource::make($result['user']), 'تم تسجيل الدخول بنجاح',$result['token']);
+    }
+    public function profile(): JsonResponse
+    {
+        $user = auth()->user();
+        return $this->ApiSuccessResponse(UserResource::make($user));
+    }
+    public function updateProfile(UpdateProfileRequest $request): JsonResponse
+    {
+        $user = $this->authService->updateProfile($request->user(), $request->validated());
+        return $this->ApiSuccessResponse(UserResource::make($user),'تم تحديث البيانات بنجاح');
+    }
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
+    {
+        $this->authService->changePassword(
+            $request->user(),
+            $request->validated('current_password'),
+            $request->validated('password')
+        );
+
+        return $this->ApiSuccessResponse(null, 'تم تغيير كلمة السر بنجاح');
     }
 }

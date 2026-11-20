@@ -63,6 +63,15 @@ Route::group(['prefix' => 'v1','middleware' => 'throttle:60,1'], function () {
     Route::post('orders', [OrderController::class, 'checkout']);
     #auth routes
     Route::group(['middleware' => 'auth:sanctum'], function () {
+        #auth api
+        Route::group(['prefix' => 'auth'], function () {
+            #profile api
+            Route::get('profile', [AuthController::class, 'profile']);
+            #update profile api
+            Route::post('update-profile', [AuthController::class, 'updateProfile']);
+            #change password api
+            Route::put('change-password', [AuthController::class, 'changePassword']);
+        });
         #product rating
         Route::post('products/{productId}/ratings',[RatingController::class,'store']);
         #orders
