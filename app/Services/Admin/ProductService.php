@@ -19,7 +19,7 @@ class ProductService
 
     public function find(int $id): Product
     {
-        return $this->repository->findOrFail($id);
+        return $this->repository->findOrFail($id,['media','attributeOptions.attribute']);
     }
 
     public function store(array $data): Product
