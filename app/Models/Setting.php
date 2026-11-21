@@ -22,6 +22,6 @@ class Setting extends Model
     ];
     public function getSiteLogoUrlAttribute()
     {
-        return $this->site_logo == null ? null :asset('storage/uploads/settings/' . $this->site_logo);
+        return $this->site_logo == null ? null :asset('storage/uploads/site/' . $this->site_logo);
     }
 }

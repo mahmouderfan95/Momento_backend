@@ -43,6 +43,9 @@ class StoreRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'phone' => ['required', 'string','regex:/^01[0-2,5][0-9]{8}$/',],
             'email' => ['nullable', 'string', 'email', 'max:255'],
+            'city_id' => ['required', 'exists:cities,id'],
+            'region_id' => ['nullable', 'exists:regions,id'],
+            'shipping_cost' => ['nullable', 'numeric'],
         ];
     }
     public function owner(): FavoriteOwner

@@ -23,13 +23,13 @@ class SettingService
         $newImage = null;
 
         if (isset($data['site_logo'])) {
-            $newImage = $this->imageService->store($data['site_logo'], 'settings');
+            $newImage = $this->imageService->store($data['site_logo'], 'site');
             $data['site_logo'] = $newImage;
         }
         $updateSetting =  DB::transaction(fn () => $this->repository->save($data));
 
         if ($newImage) {
-            $this->imageService->delete($oldImage,'settings');
+            $this->imageService->delete($oldImage,'site');
         }
         return $updateSetting;
     }

@@ -104,6 +104,9 @@ class CheckoutService
             'conversion_image' => $imagePath,
             'wallet_number' => $data['wallet_number'] ?? null,
             'wallet_provider_id' => $data['wallet_provider_id'] ?? null,
+            'city_id'         => $data['city_id'] ?? null,
+            'region_id'       => $data['region_id'] ?? null,
+            'shipping_cost'   => $data['shipping_cost'] ?? null,
         ]);
         $order->orderItems()->createMany($orderItems);
 
